@@ -1,0 +1,21 @@
+spring:
+  kafka:
+    streams:
+      security-protocol: SASL_SSL
+      bootstrap-servers: "localhost:29092"
+      application-id: "debezium-kstream-id"
+      login-module: org.apache.kafka.common.security.plain.PlainLoginModule
+      sasl-mechanism: PLAIN
+      consumer:
+        topic: "consumer-topic-2"
+        consumer-group: "streamApp-consumer-1"
+        max-poll-records: 5
+        concurrency: 2
+        batch-size: 500
+        max-poll-interval: 5000
+      producer:
+        client-id: kafka-producer
+        batch-size: 16384
+        linger: 1
+
+

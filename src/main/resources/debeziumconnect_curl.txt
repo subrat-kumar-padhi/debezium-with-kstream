@@ -1,0 +1,46 @@
+curl --location --request POST 'http://localhost:8083/connectors' \
+--header 'Accept: application/json' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "name": "dbz_6",
+    "config": {
+        "connector.class": "io.debezium.connector.oracle.OracleConnector",
+        "database.server.name": "dbz_6",
+        "database.hostname": "oracledb",
+        "database.port": "1521",
+        "database.user": "c##dbzuser",
+        "database.password": "dbz",
+        "database.dbname": "XE",
+        "database.out.server.name": "dbz_6.out",
+        "database.history.kafka.bootstrap.servers": "broker:9092",
+        "database.history.kafka.topic": "dbz_6.oracledb.customers",
+        "database.history.skip.unparseable.ddl": "true",
+        "database.tablename.case.insensitive": "true",
+        "database.oracle.version": "11",
+        "include.schema.changes": "false",
+        "database.connection.adapter": "logminer",
+        "errors.log.enable": "true",
+        "schema.include.list": "c##dbzuser",
+        "provide.transaction.metadata": "true",
+        "transaction.topic": "dbz_6.transactions",
+        "transforms": "route-customer,route-booking,unwrap",
+        "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
+        "transforms.unwrap.add.fields": "table,txId,scn",
+        "transforms.unwrap.add.headers":"txId",
+        "transforms.route-customer.type": "io.debezium.transforms.ByLogicalTableRouter",
+        "transforms.route-customer.topic.regex": "(.*)DBZUSER.CUSTOMER(_*)(.*)",
+        "transforms.route-customer.topic.replacement": "$1_customer_group",
+        "transforms.route-customer.key.field.name": "tx_id",
+        "transforms.route-customer.key.field.value": "__txId",
+        "tombstones.on.delete": "false",
+        "transforms.route-booking.type": "io.debezium.transforms.ByLogicalTableRouter",
+        "transforms.route-booking.topic.regex": "(.*)DBZUSER.BOOKING(_*)(.*)",
+        "transforms.route-booking.topic.replacement": "$1_booking_group",
+        "transforms.route-booking.key.field.name": "tx_id",
+        "transforms.route-booking.key.field.value": "__txId",
+        "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+        "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+        "key.converter.schemas.enable": "false",
+        "value.converter.schemas.enable": "false"
+    }
+}'
